@@ -16,7 +16,7 @@ while $PAGINATION
 do
     i=$(aws wellarchitected list-answers --workload-id "$WORKLOAD_ID" --lens-alias "$LENS_ALIAS" --profile "$AWS_PROFILE" --region "$AWS_REGION" --no-cli-pager --max-results 50 --next-token "$nextToken")
 
-    WORKLOAD_DATA+=$(echo "$i" | jq -c '.')  # Assuming .Items contains the answers
+    WORKLOAD_DATA+=$(echo "$i" | jq -c '.')
     
     nextToken=$(echo "$i" | jq -r '.NextToken')
 
@@ -28,7 +28,6 @@ do
     fi
 done
 WORKLOADS_PILLARS=$(echo "$WORKLOAD_DATA" | jq -r '.AnswerSummaries[].PillarId' | sort | uniq)
-#echo $WORKLOAD_DATA | jq -r '.AnswerSummaries[].PillarId' | sort | uniq
 for pillar in $WORKLOADS_PILLARS; do
     echo "Questions for Pillar: $pillar"
     echo "$WORKLOAD_DATA" | jq -r --arg pillar "$pillar" '
